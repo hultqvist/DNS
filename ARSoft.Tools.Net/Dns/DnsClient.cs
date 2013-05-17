@@ -90,6 +90,17 @@ namespace ARSoft.Tools.Net.Dns
 		}
 
 		/// <summary>
+		/// Queries a dns server for ptr records
+		/// </summary>
+		/// <param name="ip">Ip.</param>
+		public DnsMessage Resolve(IPAddress ip)
+		{
+			string name = ip.GetReverseLookupAddress();
+			return Resolve(name, RecordType.Ptr, RecordClass.INet);
+		}
+
+
+		/// <summary>
 		///   Queries a dns server for specified records.
 		/// </summary>
 		/// <param name="name"> Domain, that should be queried </param>
