@@ -29,7 +29,6 @@
     <UseVSHostingProcess>true</UseVSHostingProcess>
     <DocumentationFile>
     </DocumentationFile>
-    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>none</DebugType>
@@ -40,7 +39,6 @@
     <WarningLevel>4</WarningLevel>
     <UseVSHostingProcess>false</UseVSHostingProcess>
     <DocumentationFile>..\bin\Release\ARSoft.Tools.Net.xml</DocumentationFile>
-    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition="Exists('D:\arsoft.pfx')">
     <SignAssembly>true</SignAssembly>
