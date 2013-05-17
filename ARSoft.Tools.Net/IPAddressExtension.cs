@@ -1,4 +1,4 @@
-﻿#region Copyright and License
+#region Copyright and License
 // Copyright 2010..2012 Alexander Reinert
 // 
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -118,6 +118,19 @@ namespace ARSoft.Tools.Net
 		}
 
 		/// <summary>
+		/// Convert ipv4 address 1.2.3.4 to the ipv6 notation
+		/// </summary>
+		/// <returns>The I pv6.</returns>
+		public static IPAddress ToIPv6(this IPAddress ip)
+		{
+			if (ip.AddressFamily == AddressFamily.InterNetworkV6)
+				return ip;
+			if (ip.AddressFamily != AddressFamily.InterNetwork)
+				throw new ArgumentException("Only inet addresses can be converted", "ip");
+			return IPAddress.Parse("::ffff:" + ip);
+		}
+
+		/// <summary>
 		///   Returns the reverse lookup address of an IPAddress
 		/// </summary>
 		/// <param name="ipAddress"> Instance of the IPAddress, that should be used </param>
@@ -142,16 +155,41 @@ namespace ARSoft.Tools.Net
 			}
 			else
 			{
-				for (int i = addressBytes.Length - 1; i >= 0; i--)
+				//Test for ipv4 format
+				bool ipv4 = true;
+				for (int i = 0; i < 10; i++)
 				{
-					string hex = addressBytes[i].ToString("x2");
-					res.Append(hex[1]);
-					res.Append(".");
-					res.Append(hex[0]);
-					res.Append(".");
+					if (addressBytes[i] != 0)
+						ipv4 = false;
 				}
+				if (addressBytes[10] != 0xFF)
+					ipv4 = false;
+				if (addressBytes[11] != 0xFF)
+					ipv4 = false;
 
-				res.Append("ip6.arpa");
+				//Ipv4
+				if (ipv4)
+				{
+					for (int i = addressBytes.Length - 1; i >= 12; i--)
+					{
+						res.Append(addressBytes[i]);
+						res.Append(".");
+					}
+					res.Append("in-addr.arpa");
+				}
+				else
+				{
+					for (int i = addressBytes.Length - 1; i >= 0; i--)
+					{
+						string hex = addressBytes[i].ToString("x2");
+						res.Append(hex[1]);
+						res.Append(".");
+						res.Append(hex[0]);
+						res.Append(".");
+					}
+
+					res.Append("ip6.arpa");
+				}
 			}
 
 			return res.ToString();
