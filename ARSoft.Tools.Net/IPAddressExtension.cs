@@ -120,7 +120,6 @@ namespace ARSoft.Tools.Net
 		/// <summary>
 		/// Convert ipv4 address 1.2.3.4 to the ipv6 notation
 		/// </summary>
-		/// <returns>The I pv6.</returns>
 		public static IPAddress ToIPv6(this IPAddress ip)
 		{
 			if (ip.AddressFamily == AddressFamily.InterNetworkV6)
@@ -129,6 +128,36 @@ namespace ARSoft.Tools.Net
 				throw new ArgumentException("Only inet addresses can be converted", "ip");
 			return IPAddress.Parse("::ffff:" + ip);
 		}
+
+        /// <summary>
+        /// Convert ipv4 address ::ffff:1.2.3.4 to the ipv4 version 1.2.3.4
+        /// ipv6 addresses are passed through unmodified.
+        /// </summary>
+        public static IPAddress ToShortestVersion(this IPAddress ip)
+        {
+            if (ip.AddressFamily == AddressFamily.InterNetwork)
+                return ip;
+            if (ip.AddressFamily != AddressFamily.InterNetworkV6)
+                throw new ArgumentException("Only inet addresses can be converted", "ip");
+
+            //Test for 0000 0000 0000 0000 0000 FFFF xxxx xxxx
+            byte[] addressBytes = ip.GetAddressBytes();
+            for (int i = 0; i < 10; i++)
+            {
+                if (addressBytes[i] != 0)
+                    return ip;
+            }
+            if (addressBytes[10] != 0xFF)
+                return ip;
+            if (addressBytes[11] != 0xFF)
+                return ip;
+
+            //We got an IPv4 address
+            byte[] ipv4Bytes = new byte[4];
+            for (int i = 12; i < addressBytes.Length; i++)
+                ipv4Bytes[i - 12] = addressBytes[i];
+            return new IPAddress(ipv4Bytes);
+        }
 
 		/// <summary>
 		///   Returns the reverse lookup address of an IPAddress
@@ -142,6 +171,7 @@ namespace ARSoft.Tools.Net
 
 			StringBuilder res = new StringBuilder();
 
+            ipAddress = ipAddress.ToShortestVersion();
 			byte[] addressBytes = ipAddress.GetAddressBytes();
 
 			if (ipAddress.AddressFamily == AddressFamily.InterNetwork)
@@ -155,41 +185,16 @@ namespace ARSoft.Tools.Net
 			}
 			else
 			{
-				//Test for ipv4 format
-				bool ipv4 = true;
-				for (int i = 0; i < 10; i++)
+				for (int i = addressBytes.Length - 1; i >= 0; i--)
 				{
-					if (addressBytes[i] != 0)
-						ipv4 = false;
+					string hex = addressBytes[i].ToString("x2");
+					res.Append(hex[1]);
+					res.Append(".");
+					res.Append(hex[0]);
+					res.Append(".");
 				}
-				if (addressBytes[10] != 0xFF)
-					ipv4 = false;
-				if (addressBytes[11] != 0xFF)
-					ipv4 = false;
 
-				//Ipv4
-				if (ipv4)
-				{
-					for (int i = addressBytes.Length - 1; i >= 12; i--)
-					{
-						res.Append(addressBytes[i]);
-						res.Append(".");
-					}
-					res.Append("in-addr.arpa");
-				}
-				else
-				{
-					for (int i = addressBytes.Length - 1; i >= 0; i--)
-					{
-						string hex = addressBytes[i].ToString("x2");
-						res.Append(hex[1]);
-						res.Append(".");
-						res.Append(hex[0]);
-						res.Append(".");
-					}
-
-					res.Append("ip6.arpa");
-				}
+				res.Append("ip6.arpa");
 			}
 
 			return res.ToString();
