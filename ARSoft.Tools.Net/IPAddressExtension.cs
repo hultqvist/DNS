@@ -1,5 +1,7 @@
-#region Copyright and License
-// Copyright 2010..2012 Alexander Reinert
+﻿#region Copyright and License
+// Copyright 2010..2014 Alexander Reinert
+// 
+// This file is part of the ARSoft.Tools.Net - C# DNS client/server and SPF Library (http://arsofttoolsnet.codeplex.com/)
 // 
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -118,48 +120,6 @@ namespace ARSoft.Tools.Net
 		}
 
 		/// <summary>
-		/// Convert ipv4 address 1.2.3.4 to the ipv6 notation
-		/// </summary>
-		public static IPAddress ToIPv6(this IPAddress ip)
-		{
-			if (ip.AddressFamily == AddressFamily.InterNetworkV6)
-				return ip;
-			if (ip.AddressFamily != AddressFamily.InterNetwork)
-				throw new ArgumentException("Only inet addresses can be converted", "ip");
-			return IPAddress.Parse("::ffff:" + ip);
-		}
-
-        /// <summary>
-        /// Convert ipv4 address ::ffff:1.2.3.4 to the ipv4 version 1.2.3.4
-        /// ipv6 addresses are passed through unmodified.
-        /// </summary>
-        public static IPAddress ToShortestVersion(this IPAddress ip)
-        {
-            if (ip.AddressFamily == AddressFamily.InterNetwork)
-                return ip;
-            if (ip.AddressFamily != AddressFamily.InterNetworkV6)
-                throw new ArgumentException("Only inet addresses can be converted", "ip");
-
-            //Test for 0000 0000 0000 0000 0000 FFFF xxxx xxxx
-            byte[] addressBytes = ip.GetAddressBytes();
-            for (int i = 0; i < 10; i++)
-            {
-                if (addressBytes[i] != 0)
-                    return ip;
-            }
-            if (addressBytes[10] != 0xFF)
-                return ip;
-            if (addressBytes[11] != 0xFF)
-                return ip;
-
-            //We got an IPv4 address
-            byte[] ipv4Bytes = new byte[4];
-            for (int i = 12; i < addressBytes.Length; i++)
-                ipv4Bytes[i - 12] = addressBytes[i];
-            return new IPAddress(ipv4Bytes);
-        }
-
-		/// <summary>
 		///   Returns the reverse lookup address of an IPAddress
 		/// </summary>
 		/// <param name="ipAddress"> Instance of the IPAddress, that should be used </param>
@@ -171,7 +131,6 @@ namespace ARSoft.Tools.Net
 
 			StringBuilder res = new StringBuilder();
 
-            ipAddress = ipAddress.ToShortestVersion();
 			byte[] addressBytes = ipAddress.GetAddressBytes();
 
 			if (ipAddress.AddressFamily == AddressFamily.InterNetwork)
