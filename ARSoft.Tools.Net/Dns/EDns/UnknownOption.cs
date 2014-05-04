@@ -40,6 +40,7 @@ namespace ARSoft.Tools.Net.Dns
 		///   Creates a new instance of the UnknownOption class
 		/// </summary>
 		/// <param name="type"> Type of the option </param>
+		/// <param name="data"></param>
 		public UnknownOption(EDnsOptionType type, byte[] data)
 			: this(type)
 		{

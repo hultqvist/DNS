@@ -202,7 +202,7 @@ namespace ARSoft.Tools.Net.Dns
 		/// <param name="ar">
 		///   An <see cref="System.IAsyncResult" /> object returned by a call to
 		///   <see
-		///     cref="ARSoft.Tools.Net.Dns.DnsClient.BeginResolve" />
+		///     cref="ARSoft.Tools.Net.Dns.DnsClient.BeginResolve(string,System.AsyncCallback, object)" />
 		///   .
 		/// </param>
 		/// <returns> The complete response of the dns server </returns>
