@@ -62,6 +62,17 @@ namespace ARSoft.Tools.Net.Dns.DynamicUpdate
 			set { Questions = new List<DnsQuestion>() { new DnsQuestion(value, RecordType.Soa, RecordClass.Any) }; }
 		}
 
+		public RecordType ZoneType
+		{
+			get { return Questions.Count > 0 ? Questions[0].RecordType : RecordType.Null; }
+			set
+			{
+				if (String.IsNullOrEmpty(this.ZoneName))
+					throw new ArgumentException("Zone name must be provided", "message");
+				Questions[0].RecordType = value;
+			}
+		}
+
 		/// <summary>
 		///   Gets or sets the entries in the prerequisites section
 		/// </summary>
