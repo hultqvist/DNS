@@ -73,6 +73,17 @@ namespace ARSoft.Tools.Net.Dns.DynamicUpdate
 			}
 		}
 
+		public RecordClass ZoneClass
+		{
+			get { return Questions.Count > 0 ? Questions[0].RecordClass : RecordClass.Any; }
+			set
+			{
+				if (String.IsNullOrEmpty(this.ZoneName))
+					throw new ArgumentException("Zone name must be provided", "message");
+				this.Questions[0].RecordClass = value;
+			}
+		}
+
 		/// <summary>
 		///   Gets or sets the entries in the prerequisites section
 		/// </summary>
