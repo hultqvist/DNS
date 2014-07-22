@@ -42,10 +42,10 @@ namespace ARSoft.Tools.Net.Dns
 		///   Get the contents of a DnsMessage as byte array
 		/// </summary>
 		/// <returns></returns>
-		public byte[] Encode()
+		public byte[] Encode(bool addLengthPrefix)
 		{
 			byte[] data;
-			base.Encode(false, out data);
+			base.Encode(addLengthPrefix, out data);
 			return data;
 		}
 
