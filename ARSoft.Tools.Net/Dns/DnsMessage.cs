@@ -38,16 +38,16 @@ namespace ARSoft.Tools.Net.Dns
 			return Parse<DnsMessage>(data);
 		}
 
-        /// <summary>
-        ///   Get the contents of a DnsMessage as byte array
-        /// </summary>
-        /// <returns></returns>
-        public byte[] Encode()
-        {
-            byte[] data;
-            base.Encode(false, out data);
-            return data;
-        }
+		/// <summary>
+		///   Get the contents of a DnsMessage as byte array
+		/// </summary>
+		/// <returns></returns>
+		public byte[] Encode()
+		{
+			byte[] data;
+			base.Encode(false, out data);
+			return data;
+		}
 
 		#region Header
 		/// <summary>
