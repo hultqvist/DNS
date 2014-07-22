@@ -38,6 +38,17 @@ namespace ARSoft.Tools.Net.Dns
 			return Parse<DnsMessage>(data);
 		}
 
+        /// <summary>
+        ///   Get the contents of a DnsMessage as byte array
+        /// </summary>
+        /// <returns></returns>
+        public byte[] Encode()
+        {
+            byte[] data;
+            base.Encode(false, out data);
+            return data;
+        }
+
 		#region Header
 		/// <summary>
 		///   <para>Gets or sets the autoritive answer (AA) flag</para>
