@@ -17,40 +17,41 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using System.Net;
+using System.Net.Sockets;
 
-namespace ARSoft.Tools.Net.Spf
+namespace ARSoft.Tools.Net.Dns
 {
 	/// <summary>
-	///   Represents a single modifier term in a SPF record
+	///   Event arguments of <see cref="DnsServer.QueryReceived" /> event.
 	/// </summary>
-	public class SpfModifier : SpfTerm
+	public class QueryReceivedEventArgs : EventArgs
 	{
 		/// <summary>
-		///   Type of the modifier
+		///   Original query, which the client provided
 		/// </summary>
-		public SpfModifierType Type { get; set; }
+		public DnsMessageBase Query { get; private set; }
 
 		/// <summary>
-		///   Domain part of the modifier
+		///   Protocol used by the client
 		/// </summary>
-		public string Domain { get; set; }
+		public ProtocolType ProtocolType { get; private set; }
 
 		/// <summary>
-		///   Returns the textual representation of a modifier term
+		///   Remote endpoint of the client
 		/// </summary>
-		/// <returns> Textual representation </returns>
-		public override string ToString()
+		public IPEndPoint RemoteEndpoint { get; private set; }
+
+		/// <summary>
+		///   The response, which should be sent to the client
+		/// </summary>
+		public DnsMessageBase Response { get; set; }
+
+		internal QueryReceivedEventArgs(DnsMessageBase query, ProtocolType protocolType, IPEndPoint remoteEndpoint)
 		{
-			StringBuilder res = new StringBuilder();
-
-			res.Append(EnumHelper<SpfModifierType>.ToString(Type).ToLower());
-			res.Append("=");
-			res.Append(Domain);
-
-			return res.ToString();
+			Query = query;
+			ProtocolType = protocolType;
+			RemoteEndpoint = remoteEndpoint;
 		}
 	}
 }

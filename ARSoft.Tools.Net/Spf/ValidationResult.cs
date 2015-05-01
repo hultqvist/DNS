@@ -16,41 +16,21 @@
 // limitations under the License.
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
 namespace ARSoft.Tools.Net.Spf
 {
 	/// <summary>
-	///   Represents a single modifier term in a SPF record
+	///   The result of a SPF or SenderID validation
 	/// </summary>
-	public class SpfModifier : SpfTerm
+	public class ValidationResult
 	{
 		/// <summary>
-		///   Type of the modifier
+		///   The result of the validation
 		/// </summary>
-		public SpfModifierType Type { get; set; }
+		public SpfQualifier Result { get; internal set; }
 
 		/// <summary>
-		///   Domain part of the modifier
+		///   A explanation in case of result Fail. Only filled if requested on validation call
 		/// </summary>
-		public string Domain { get; set; }
-
-		/// <summary>
-		///   Returns the textual representation of a modifier term
-		/// </summary>
-		/// <returns> Textual representation </returns>
-		public override string ToString()
-		{
-			StringBuilder res = new StringBuilder();
-
-			res.Append(EnumHelper<SpfModifierType>.ToString(Type).ToLower());
-			res.Append("=");
-			res.Append(Domain);
-
-			return res.ToString();
-		}
+		public string Explanation { get; internal set; }
 	}
 }

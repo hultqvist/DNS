@@ -24,41 +24,50 @@ using System.Text;
 namespace ARSoft.Tools.Net.Dns
 {
 	/// <summary>
-	///   Unknown EDNS option
+	///   <para>Expire EDNS Option</para>
+	///   <para>
+	///     Defined in
+	///     <see cref="!:http://tools.ietf.org/html/rfc7314">RFC 7314</see>
+	///   </para>
 	/// </summary>
-	public class UnknownOption : EDnsOptionBase
+	public class ExpireOption : EDnsOptionBase
 	{
 		/// <summary>
-		///   Binary data of the option
+		///   The expiration of the SOA record in seconds. Should be null on queries.
 		/// </summary>
-		public byte[] Data { get; private set; }
-
-		internal UnknownOption(EDnsOptionType type)
-			: base(type) {}
+		public int? SoaExpire { get; private set; }
 
 		/// <summary>
-		///   Creates a new instance of the UnknownOption class
+		///   Creates a new instance of the ExpireOption class
 		/// </summary>
-		/// <param name="type"> Type of the option </param>
-		public UnknownOption(EDnsOptionType type, byte[] data)
-			: this(type)
+		public ExpireOption()
+			: base(EDnsOptionType.Expire) {}
+
+		/// <summary>
+		///   Creates a new instance of the ExpireOption class
+		/// </summary>
+		/// <param name="soaExpire">The expiration of the SOA record in seconds</param>
+		public ExpireOption(int soaExpire)
+			: this()
 		{
-			Data = data;
+			SoaExpire = soaExpire;
 		}
 
 		internal override void ParseData(byte[] resultData, int startPosition, int length)
 		{
-			Data = DnsMessageBase.ParseByteData(resultData, ref startPosition, length);
+			if (length == 4)
+				SoaExpire = DnsMessageBase.ParseInt(resultData, ref startPosition);
 		}
 
 		internal override ushort DataLength
 		{
-			get { return (ushort) ((Data == null) ? 0 : Data.Length); }
+			get { return (ushort) (SoaExpire.HasValue ? 4 : 0); }
 		}
 
 		internal override void EncodeData(byte[] messageData, ref int currentPosition)
 		{
-			DnsMessageBase.EncodeByteArray(messageData, ref currentPosition, Data);
+			if (SoaExpire.HasValue)
+				DnsMessageBase.EncodeInt(messageData, ref currentPosition, SoaExpire.Value);
 		}
 	}
 }

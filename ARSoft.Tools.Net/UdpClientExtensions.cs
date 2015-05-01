@@ -19,38 +19,25 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Sockets;
 using System.Text;
+using System.Threading.Tasks;
 
-namespace ARSoft.Tools.Net.Spf
+namespace ARSoft.Tools.Net
 {
-	/// <summary>
-	///   Represents a single modifier term in a SPF record
-	/// </summary>
-	public class SpfModifier : SpfTerm
+	internal static class UdpClientExtensions
 	{
-		/// <summary>
-		///   Type of the modifier
-		/// </summary>
-		public SpfModifierType Type { get; set; }
-
-		/// <summary>
-		///   Domain part of the modifier
-		/// </summary>
-		public string Domain { get; set; }
-
-		/// <summary>
-		///   Returns the textual representation of a modifier term
-		/// </summary>
-		/// <returns> Textual representation </returns>
-		public override string ToString()
+		public static async Task<UdpReceiveResult> ReceiveAsync(this UdpClient udpClient, int timeout)
 		{
-			StringBuilder res = new StringBuilder();
+			var connectTask = udpClient.ReceiveAsync();
+			var timeoutTask = Task.Delay(timeout);
 
-			res.Append(EnumHelper<SpfModifierType>.ToString(Type).ToLower());
-			res.Append("=");
-			res.Append(Domain);
+			await Task.WhenAny(connectTask, timeoutTask);
 
-			return res.ToString();
+			if (connectTask.IsCompleted)
+				return connectTask.Result;
+
+			return new UdpReceiveResult();
 		}
 	}
 }

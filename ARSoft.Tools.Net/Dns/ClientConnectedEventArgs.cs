@@ -17,40 +17,35 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using System.Net;
+using System.Net.Sockets;
 
-namespace ARSoft.Tools.Net.Spf
+namespace ARSoft.Tools.Net.Dns
 {
 	/// <summary>
-	///   Represents a single modifier term in a SPF record
+	///   Event arguments of <see cref="DnsServer.ClientConnected" /> event.
 	/// </summary>
-	public class SpfModifier : SpfTerm
+	public class ClientConnectedEventArgs : EventArgs
 	{
 		/// <summary>
-		///   Type of the modifier
+		///   Protocol used by the client
 		/// </summary>
-		public SpfModifierType Type { get; set; }
+		public ProtocolType ProtocolType { get; private set; }
 
 		/// <summary>
-		///   Domain part of the modifier
+		///   Remote endpoint of the client
 		/// </summary>
-		public string Domain { get; set; }
+		public IPEndPoint RemoteEndpoint { get; private set; }
 
 		/// <summary>
-		///   Returns the textual representation of a modifier term
+		///   If true, the client connection will be refused
 		/// </summary>
-		/// <returns> Textual representation </returns>
-		public override string ToString()
+		public bool RefuseConnect { get; set; }
+
+		internal ClientConnectedEventArgs(ProtocolType protocolType, IPEndPoint remoteEndpoint)
 		{
-			StringBuilder res = new StringBuilder();
-
-			res.Append(EnumHelper<SpfModifierType>.ToString(Type).ToLower());
-			res.Append("=");
-			res.Append(Domain);
-
-			return res.ToString();
+			ProtocolType = protocolType;
+			RemoteEndpoint = remoteEndpoint;
 		}
 	}
 }
